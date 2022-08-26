@@ -5,12 +5,21 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Yandex\OAuth\OAuthClient;
 use Yandex\OAuth\Exception\AuthRequestException;
+use Illuminate\Support\Arr;
 
 class YandexMarketController extends Controller
 {
   private function get_client()
   {
     return new OAuthClient(env('YANDEX_CLIENT_ID'), env('YANDEX_CLIENT_SECRET'));
+  }
+  private function get_access_token()
+  {
+    return session('YANDEX_ACCESS_TOKEN');
+  }
+  private function get_client_id()
+  {
+    return env('YANDEX_CLIENT_ID');
   }
 
   public function settings()
@@ -24,7 +33,28 @@ class YandexMarketController extends Controller
 
   public function get_orders()
   {
-    $orders = [1, 2, 3];
+    if (!request()->has('action')) return view('tools.yandex-market.get-orders-form');
+
+    $campaign_id = request()->get('campaign_id');
+    $URL = "https://api.partner.market.yandex.ru/v2/campaigns/{$campaign_id}/orders.json";
+
+    $status = request()->get('status');
+    if ($status) $URL .= "?status={$status}";
+    $substatus = request()->get('substatus');
+    if ($substatus) $URL .= "&substatus={$substatus}";
+
+    // $URL = "https://webhook.site/7a5b168a-7a38-4e0b-962d-79709a80faa7";
+
+    // Fetch data from url with next headers:
+    // Authorization: OAuth oauth_token="$this->get_access_token()", oauth_client_id="$this->get_client_id()"
+    $response = json_decode(file_get_contents($URL, false, stream_context_create([
+      'http' => [
+        'header' => "Authorization: OAuth oauth_token=\"{$this->get_access_token()}\" , oauth_client_id=\"{$this->get_client_id()}\"",
+      ],
+    ])), true);
+
+    // $orders = Arr::get($response, 'orders', []);
+    $orders = $response;
 
 
     $data = [
@@ -44,6 +74,7 @@ class YandexMarketController extends Controller
     ]);
     $client->authRedirect(true, OAuthClient::CODE_AUTH_TYPE, $state);
   }
+
   public function _authenticate()
   {
     $code = request()->get('code');
