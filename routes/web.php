@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use Illuminate\Support\Str;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -14,11 +14,22 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+  return view('welcome');
+})->name('welcome');
+
+Route::prefix('dashboard')->middleware(['auth'])->name('dashboard')->group(function () {
+  Route::get('/', function () {
+    return view('dashboard');
+  });
+
+  Route::prefix('tools')->name('.tools')->group(function () {
+    require __DIR__ . '/tools/yandex-market.php';
+  });
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+require __DIR__ . '/auth.php';
 
-require __DIR__.'/auth.php';
+function addRouteGet($name)
+{
+  Route::get('/' . $name, Str::replace('-', '_', $name))->name('.' . $name);
+}

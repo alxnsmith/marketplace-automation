@@ -1,0 +1,17 @@
+
+.card
+  &-items
+    max-width: 1200px
+    @apply mx-auto w-full
+  &-item
+    @apply bg-white rounded-lg border overflow-hidden
+
+    &-head, &-body, &-footer
+      @apply p-2 px-4
+    &-head + .card-item-body
+      @apply border-t py-2
+    &-body + .card-item-footer
+      @apply border-t
+
+    &-head
+      @apply bg-slate-100
