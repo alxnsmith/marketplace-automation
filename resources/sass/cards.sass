@@ -8,10 +8,12 @@
 
     &-head, &-body, &-footer
       @apply p-2 px-4
-    &-head + .card-item-body
-      @apply border-t py-2
-    &-body + .card-item-footer
+    >div:not(:first-child)
       @apply border-t
 
     &-head
       @apply bg-slate-100
+
+    &-footer
+      .actions
+        @apply flex justify-end

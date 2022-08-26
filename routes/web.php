@@ -23,13 +23,13 @@ Route::prefix('dashboard')->middleware(['auth'])->name('dashboard')->group(funct
   });
 
   Route::prefix('tools')->name('.tools')->group(function () {
-    require __DIR__ . '/tools/yandex-market.php';
+    require __DIR__ . '/tools/yandex-market-route.php';
   });
 });
 
 require __DIR__ . '/auth.php';
 
-function addRouteGet($name)
+function _addRouteController($method, $name)
 {
-  Route::get('/' . $name, Str::replace('-', '_', $name))->name('.' . $name);
+  Route::$method('/' . $name, Str::replace('-', '_', $name))->name('.' . $name);
 }

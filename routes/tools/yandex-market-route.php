@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::name('.yandex-market')->prefix('yandex-market')->controller(YandexMarketController::class)->group(function () {
-  addRouteGet('settings');
-  addRouteGet('get-orders');
+  _addRouteController('get', 'settings');
+  _addRouteController('get', 'get-orders');
+  _addRouteController('get', 'login');
+  _addRouteController('get', 'logout');
+  _addRouteController('get', '_authenticate');
 });

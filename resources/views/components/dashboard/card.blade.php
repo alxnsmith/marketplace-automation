@@ -1,20 +1,20 @@
 @props(['title'=>''])
 @php
-  $head = $header ?? "<h3 class='text-xl'>" . $title . '</h3>'; 
+$head = $header ?? "<h3 class='text-xl'>" . $title . '</h3>';
 @endphp
 
 <div class="card-item">
   @unless(empty($head))
-    <div class="card-item-head">{!! $head !!}</div>
+  <div class="card-item-head">{!! $head !!}</div>
   @endunless
-  @unless(empty($slot))
-    <div class="card-item-body">
-      {{$slot}}
-    </div>
-  @endunless
+  @if($slot->isNotEmpty())
+  <div class="card-item-body">
+    {{$slot}}
+  </div>
+  @endif
   @unless(empty($footer))
-    <div class="card-item-footer">
-      {{$footer}}
-    </div>
+  <div class="card-item-footer">
+    {{$footer}}
+  </div>
   @endunless
 </div>
