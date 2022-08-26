@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Заказы Yandex Market" back="true">
+<x-dashboard-layout title="Заказы Yandex Market" back="true" :backUrl="route('dashboard')">
   <form action="" method="get">
     <input type="number" name="campaign_id" placeholder="campaign_id" required>
     <select name="status" required>
