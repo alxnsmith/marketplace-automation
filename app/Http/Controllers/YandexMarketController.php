@@ -10,10 +10,23 @@ class YandexMarketController extends Controller
 {
   public function settings()
   {
-    $credentials = [
-      'access_token' => YandexMarketService::get_access_token(),
-    ];
-    return view('tools.yandex-market.settings', compact('credentials'));
+    $settings = YandexMarketService::get_settings();
+
+    return view('tools.yandex-market.settings', compact('settings'));
+  }
+  public function udpate_settings()
+  {
+    $settings = request()->validate([
+      'settings.campaign_id' => 'required|integer',
+    ])['settings'];
+
+    YandexMarketService::set_settings($settings);
+
+    return redirect()
+      ->back()
+      ->with('alerts', [
+        ['type' => 'success', 'html' => 'Настройки сохранены'],
+      ]);
   }
 
   public function get_orders()
@@ -37,6 +50,12 @@ class YandexMarketController extends Controller
 
     YandexMarketService::get_client()
       ->authRedirect(true, OAuthClient::CODE_AUTH_TYPE, $state);
+  }
+
+  public function get_labels()
+  {
+    $campaign_id = request()->get('campaign_id');
+    return YandexMarketService::get_orders($campaign_id);
   }
 
   public function _authenticate()

@@ -1,13 +1,14 @@
 <x-dashboard-layout title="Заказы Yandex Market" back="true" :backUrl="route('dashboard')">
   <form action="" method="get">
-    <input type="number" name="campaign_id" placeholder="campaign_id" value="{{session('YANDEX_CAMPAIGN_ID')}}"
-      required>
-    <select name="status" required>
+    <input type="number" name="campaign_id" placeholder="campaign_id" value="{{ session('YANDEX_CAMPAIGN_ID') }}" required>
+    <select name="status">
       <option value="">Статус</option>
+      <option value="">Любой Статус</option>
       <option value="PROCESSING" selected>Обрабатывается</option>
     </select>
-    <select name="substatus" required>
+    <select name="substatus">
       <option value="">Подстатус</option>
+      <option value="">Любой Подстатус</option>
       <option value="STARTED" selected>Можно комплектовать</option>
       {{-- <option value="READY_TO_SHIP">Готов к отгрузке</option> --}}
     </select>

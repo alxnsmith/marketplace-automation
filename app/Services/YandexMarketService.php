@@ -8,11 +8,24 @@ use Yandex\OAuth\Exception\AuthRequestException;
 
 class YandexMarketService
 {
+  static $default_settings = [
+    'campaign_id' => null,
+  ];
+
   static function get_client(): OAuthClient
   {
     return new OAuthClient(self::get_client_id(), self::get_client_secret());
   }
 
+  static function get_settings(): array
+  {
+    $default = self::$default_settings;
+    return session('YANDEX_SETTINGS', $default);
+  }
+  static function set_settings($settings)
+  {
+    session(['YANDEX_SETTINGS' => $settings]);
+  }
 
   static function get_access_token(): string
   {
