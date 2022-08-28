@@ -65,53 +65,11 @@ class YandexMarketService
   }
 }
 
-class YandexMarketSettings
+class YandexMarketSettings extends AbstractSettings
 {
   const SESSION_KEY = 'YANDEX_SETTINGS';
-
-  static function sess_key($key = null)
-  {
-    return $key ? self::SESSION_KEY . '.' . $key : self::SESSION_KEY;
-  }
-
-
-  static function _get_default_settings()
-  {
-    return [
-      'access_token' => null,
-      'campaign_id' => null,
-    ];
-  }
-
-  static function get($option = null): array|string
-  {
-    $default = self::_get_default_settings();
-    $settings = session(self::sess_key(), $default);
-    if (empty($option))
-      return $settings;
-
-
-    return Arr::get($settings, $option);
-  }
-
-  static function set($a = null, $b = null)
-  {
-    if (is_array($a)) return session([self::sess_key() => $a]);
-    if (is_string($a)) return session([self::sess_key() . '.' . $a => $b]);
-  }
-
-  static function update($settings)
-  {
-    $current = self::get();
-    $current = array_merge($current, $settings);
-    self::set($current);
-  }
-
-  static function clean($key = null)
-  {
-    $default = self::_get_default_settings();
-    if (empty($key)) return self::set($default);
-
-    return session([self::sess_key($key) => $default[$key]]);
-  }
+  const DEFAULT_SETTINGS = [
+    'access_token' => null,
+    'campaign_id' => null,
+  ];
 }
