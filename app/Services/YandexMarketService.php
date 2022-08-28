@@ -16,10 +16,6 @@ class YandexMarketService
     return new OAuthClient(self::get_client_id(), self::get_client_secret());
   }
 
-  static function get_access_token(): string
-  {
-    return session('YANDEX_ACCESS_TOKEN');
-  }
   static function get_client_id(): string
   {
     return env('YANDEX_CLIENT_ID');
@@ -31,7 +27,7 @@ class YandexMarketService
 
   static function get_auth_header(): string
   {
-    return 'OAuth oauth_token="' . self::get_access_token() . '" , oauth_client_id="' . self::get_client_id() . '"';
+    return 'OAuth oauth_token="' . self::Settings::get('access_token') . '" , oauth_client_id="' . self::get_client_id() . '"';
   }
 
   static function get_orders($campaign_id): array
