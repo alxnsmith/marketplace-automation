@@ -1,5 +1,5 @@
 @php
-$links = [['title' => 'Показать заказы', 'route' => 'dashboard.tools.yandex-market.get-orders'], ['title' => 'Распечатать ярлыки', 'route' => 'dashboard.tools.yandex-market.get-labels'], ['title' => 'Принять заказы', 'route' => 'welcome'], ['title' => 'Настройки', 'route' => 'dashboard.tools.yandex-market.settings']];
+$links = [['title' => 'Показать заказы', 'route' => 'dashboard.tools.yandex-market.get-orders'], ['title' => 'Настройки', 'route' => 'dashboard.tools.yandex-market.settings']];
 $is_logged_in = !empty(Arr::get($settings, 'access_token'));
 
 $title = 'Yandex Market';
