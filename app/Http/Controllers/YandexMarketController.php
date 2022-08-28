@@ -38,6 +38,12 @@ class YandexMarketController extends Controller
     return view('tools.yandex-market.show-orders', $data);
   }
 
+  public function get_labels()
+  {
+    $campaign_id = request()->get('campaign_id');
+    return YandexMarketService::get_orders($campaign_id);
+  }
+
   public function login()
   {
     $state = json_encode([
@@ -46,12 +52,6 @@ class YandexMarketController extends Controller
 
     YandexMarketService::get_client()
       ->authRedirect(true, OAuthClient::CODE_AUTH_TYPE, $state);
-  }
-
-  public function get_labels()
-  {
-    $campaign_id = request()->get('campaign_id');
-    return YandexMarketService::get_orders($campaign_id);
   }
 
   public function _authenticate()
