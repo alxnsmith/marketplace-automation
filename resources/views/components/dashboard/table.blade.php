@@ -2,11 +2,10 @@
 
 @php
 $has_data = $csv ? count($data) > 1 : !empty($data);
-// TODO: Stylise has no data message
 @endphp
 
 @if (!$has_data)
-  <p>Нет данных</p>
+  <div class="alert show">Нет данных</div>
 @else
   @php
     if ($csv) {
