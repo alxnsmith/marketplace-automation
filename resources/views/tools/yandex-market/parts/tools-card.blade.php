@@ -1,10 +1,11 @@
 @php
 $links = [['title' => 'Показать заказы', 'route' => 'dashboard.tools.yandex-market.get-orders'], ['title' => 'Распечатать ярлыки', 'route' => 'dashboard.tools.yandex-market.get-labels'], ['title' => 'Принять заказы', 'route' => 'welcome'], ['title' => 'Настройки', 'route' => 'dashboard.tools.yandex-market.settings']];
-
+$is_logged_in = !empty(Arr::get($settings, 'access_token'));
 @endphp
 
 <x-dashboard.card title="Yandex Market">
-  @if (session()->has('YANDEX_ACCESS_TOKEN'))
+  @dump($settings)
+  @if ($is_logged_in)
     <ul class="space-y-2">
       @foreach ($links as $link)
         <li class="border-b border-dashed hover:underline">
@@ -12,14 +13,14 @@ $links = [['title' => 'Показать заказы', 'route' => 'dashboard.too
         </li>
       @endforeach
     </ul>
-  @endif
+  @endunless
   <x-slot name="footer">
     <div class="actions">
-      @unless(session()->has('YANDEX_ACCESS_TOKEN'))
+      @unless($is_logged_in)
         <x-button href="{{ route('dashboard.tools.yandex-market.login') }}">Войти</x-button>
       @else
         <x-button href="{{ route('dashboard.tools.yandex-market.logout') }}">Выйти</x-button>
-        @endif
-      </div>
-    </x-slot>
-  </x-dashboard.card>
+      @endunless
+    </div>
+  </x-slot>
+</x-dashboard.card>

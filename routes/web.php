@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 /*
@@ -18,9 +19,7 @@ Route::get('/', function () {
 })->name('welcome');
 
 Route::prefix('dashboard')->middleware(['auth'])->name('dashboard')->group(function () {
-  Route::get('/', function () {
-    return view('dashboard');
-  });
+  Route::get('/', [DashboardController::class, 'index']);
 
   Route::prefix('tools')->name('.tools')->group(function () {
     require __DIR__ . '/tools/yandex-market-route.php';

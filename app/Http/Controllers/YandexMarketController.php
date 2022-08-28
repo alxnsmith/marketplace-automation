@@ -10,17 +10,17 @@ class YandexMarketController extends Controller
 {
   public function settings()
   {
-    $settings = YandexMarketService::get_settings();
-
+    $settings = YandexMarketService::Settings::get();
     return view('tools.yandex-market.settings', compact('settings'));
   }
+
   public function udpate_settings()
   {
     $settings = request()->validate([
       'settings.campaign_id' => 'required|integer',
     ])['settings'];
 
-    YandexMarketService::set_settings($settings);
+    YandexMarketService::Settings::update($settings);
 
     return redirect()
       ->back()
@@ -31,11 +31,8 @@ class YandexMarketController extends Controller
 
   public function get_orders()
   {
-    if (!request()->has('action')) return view('tools.yandex-market.get-orders-form');
-
-    $campaign_id = request()->get('campaign_id');
-    session(['YANDEX_CAMPAIGN_ID' => $campaign_id]);
-
+    $campaign_id = YandexMarketService::Settings::get('campaign_id');
+    if (!request()->has('action')) return view('tools.yandex-market.get-orders-form', compact('campaign_id'));
 
     $data = [...YandexMarketService::get_orders($campaign_id)];
     return view('tools.yandex-market.show-orders', $data);
@@ -45,7 +42,6 @@ class YandexMarketController extends Controller
   {
     $state = json_encode([
       'redirect_uri' => url()->previous(),
-      'state'        => 'state',
     ]);
 
     YandexMarketService::get_client()
@@ -60,7 +56,8 @@ class YandexMarketController extends Controller
 
   public function _authenticate()
   {
-    session(['YANDEX_ACCESS_TOKEN' => YandexMarketService::get_access_token_on_webhook()]); // Sets token to session
+    $token = YandexMarketService::get_access_token_on_webhook();
+    YandexMarketService::Settings::set('access_token', $token);
 
     $state = json_decode(request()->get('state')); // TODO: Add validation and fallback to dashboard
     return redirect($state->redirect_uri);
@@ -68,7 +65,7 @@ class YandexMarketController extends Controller
 
   public function logout()
   {
-    session()->remove('YANDEX_ACCESS_TOKEN');
+    YandexMarketService::Settings::clean();
     return redirect()->back();
   }
 }
