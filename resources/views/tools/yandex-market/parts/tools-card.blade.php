@@ -1,10 +1,14 @@
 @php
 $links = [['title' => 'Показать заказы', 'route' => 'dashboard.tools.yandex-market.get-orders'], ['title' => 'Распечатать ярлыки', 'route' => 'dashboard.tools.yandex-market.get-labels'], ['title' => 'Принять заказы', 'route' => 'welcome'], ['title' => 'Настройки', 'route' => 'dashboard.tools.yandex-market.settings']];
 $is_logged_in = !empty(Arr::get($settings, 'access_token'));
+
+$title = 'Yandex Market';
+if (!empty($settings['campaign_id'])) {
+    $title .= " <sup>[{$settings['campaign_id']}]</sup>";
+}
 @endphp
 
-<x-dashboard.card title="Yandex Market">
-  @dump($settings)
+<x-dashboard.card :title="$title">
   @if ($is_logged_in)
     <ul class="space-y-2">
       @foreach ($links as $link)
