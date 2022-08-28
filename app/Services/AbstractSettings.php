@@ -9,6 +9,7 @@ interface IAbstractSettings
   const SESSION_KEY = "YourSessionKey";
   const DEFAULT_SETTINGS = [];
 
+  public static function set_defaults(): void;
   public static function sess_key(null|string $key): string;
   public static function get(null|string $option): array|string|null;
   public static function set(array|string $a, mixed $b): void;
@@ -18,6 +19,11 @@ interface IAbstractSettings
 
 abstract class AbstractSettings implements IAbstractSettings
 {
+  static function set_defaults(): void
+  {
+    static::set(static::get()); // set defaults
+  }
+
   static function sess_key($key = null): string
   {
     return $key ? static::SESSION_KEY . '.' . $key : static::SESSION_KEY;
@@ -34,7 +40,7 @@ abstract class AbstractSettings implements IAbstractSettings
   static function set($a, $b = null): void
   {
     if (is_array($a)) session([static::sess_key() => $a]);
-    if (is_string($a))  session([static::sess_key() . '.' . $a => $b]);
+    if (is_string($a))  session([static::sess_key($a) => $b]);
   }
 
   static function update($settings): void

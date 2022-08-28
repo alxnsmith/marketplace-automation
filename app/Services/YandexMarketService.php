@@ -68,4 +68,10 @@ class YandexMarketSettings extends AbstractSettings
     'access_token' => null,
     'campaign_id' => null,
   ];
+
+  static function init($access_token)
+  {
+    static::set_defaults();
+    static::set('access_token', $access_token);
+  }
 }

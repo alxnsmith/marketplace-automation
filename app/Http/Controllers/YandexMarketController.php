@@ -57,7 +57,7 @@ class YandexMarketController extends Controller
   public function _authenticate()
   {
     $token = YandexMarketService::get_access_token_on_webhook();
-    YandexMarketService::Settings::set('access_token', $token);
+    YandexMarketService::Settings::init($token);
 
     $state = json_decode(request()->get('state')); // TODO: Add validation and fallback to dashboard
     return redirect($state->redirect_uri);
