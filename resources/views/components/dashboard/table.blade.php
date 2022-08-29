@@ -1,4 +1,4 @@
-@props(['data' => [], 'csv' => false]) {{-- data is csv like, or an array of arrays --}}
+@props(['data' => [], 'csv' => false, 'sizes' => []]) {{-- data is csv like, or an array of arrays --}}
 
 @php
 $has_data = $csv ? count($data) > 1 : !empty($data);
@@ -19,8 +19,11 @@ $has_data = $csv ? count($data) > 1 : !empty($data);
   <table {{ $attributes->class(['ui-table']) }}>
     <thead>
       <tr>
-        @foreach ($thead as $value)
-          <th>{{ $value }}</th>
+        @foreach ($thead as $i => $value)
+          @php
+            $width = Arr::get($sizes, $i, false);
+          @endphp
+          <th {{ $attributes->merge(compact('width')) }}>{!! $value !!}</th>
         @endforeach
       </tr>
     </thead>
@@ -28,7 +31,11 @@ $has_data = $csv ? count($data) > 1 : !empty($data);
       @foreach ($tbody as $row)
         <tr>
           @foreach ($row as $key => $value)
-            <td>{{ $value }}</td>
+            @if (is_array($value))
+              <td @class(Arr::get($value, 'class'))">{!! Arr::get($value, 'html') !!}</td>
+            @else
+              <td>{!! $value !!}</td>
+            @endif
           @endforeach
         </tr>
       @endforeach

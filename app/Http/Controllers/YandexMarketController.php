@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Yandex\OAuth\OAuthClient;
 use App\Services\YandexMarketService;
 
+use PDFMerger\PDFMerger;
+
 class YandexMarketController extends Controller
 {
   public function settings()
@@ -38,10 +40,38 @@ class YandexMarketController extends Controller
     return view('tools.yandex-market.show-orders', $data);
   }
 
-  public function get_labels()
+  public function action()
   {
-    $campaign_id = request()->get('campaign_id');
-    return YandexMarketService::get_orders($campaign_id);
+    $query = request()->validate([
+      'action' => 'required|in:get_labels',
+      'orders' =>  'required|array',
+      'orders.*' => 'required|integer',
+    ]);
+    switch ($query['action']) {
+      case 'get_labels':
+        $campaign_id = YandexMarketService::Settings::get('campaign_id');
+        $orders = $query['orders'];
+        $labels = [];
+        foreach ($orders as $order_id) {
+          $labels[$order_id] = YandexMarketService::get_order_labels_pdf($campaign_id, $order_id);
+        }
+
+        // dd($labels);
+        $merger = new PDFMerger();
+        $files = [];
+        foreach ($labels as $order_id => $file) {
+          $files[] = $tmp_file = tempnam(sys_get_temp_dir(), "order_labels_{$order_id}_");
+          file_put_contents($tmp_file, $file);
+          $merger->addPDF($tmp_file);
+        }
+        $merger->merge('download', "labels.pdf");
+        return redirect()->back()->with('alerts', [
+          ['type' => 'success', 'html' => 'Ярлыки сформированы'],
+        ]);
+        // return view('tools.yandex-market.show-labels', compact('labels'));
+    }
+
+    return $query['orders'];
   }
 
   public function login()

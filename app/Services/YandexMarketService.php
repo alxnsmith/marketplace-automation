@@ -4,6 +4,7 @@ namespace App\Services;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Response;
 use Yandex\OAuth\OAuthClient;
 use Yandex\OAuth\Exception\AuthRequestException;
 
@@ -39,7 +40,25 @@ class YandexMarketService
       ->get($URL, $params)
       ->json();
 
+    if (Arr::has($response, 'error')) {
+      throw new AuthRequestException($response['error']['message']);
+    }
+
     return $response;
+  }
+
+  static function get_order_labels_pdf(int $campaign_id, int $order_id)
+  {
+    $URL = "https://api.partner.market.yandex.ru/v2/campaigns/{$campaign_id}/orders/{$order_id}/delivery/labels.json";
+    $response = Http::withHeaders(['Authorization' => self::get_auth_header()])
+      ->get($URL);
+    $filename = $order_id . '.pdf';
+
+    return $response->body();
+    // return Response::make($response->body(), 200, [
+    //   'Content-Type' => 'application/pdf',
+    //   'Content-Disposition' => 'inline; filename="' . $filename . '"'
+    // ]);
   }
 
   static function get_access_token_on_webhook(): string
@@ -73,5 +92,9 @@ class YandexMarketSettings extends AbstractSettings
   {
     static::set_defaults();
     static::set('access_token', $access_token);
+  }
+  static function is_logged_in()
+  {
+    return static::get('access_token') !== null;
   }
 }

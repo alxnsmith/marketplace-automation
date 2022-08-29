@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1a272bdae3e343d195753b5eca1de52",
+    "content-hash": "08ebafdda5658bce6bd5f4c926d5c359",
     "packages": [
         {
             "name": "brick/math",
@@ -1696,6 +1696,52 @@
                 }
             ],
             "time": "2022-07-24T11:55:47+00:00"
+        },
+        {
+            "name": "myokyawhtun/pdfmerger",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/myokyawhtun/PDFMerger.git",
+                "reference": "a0e6fcaf10dad00360414362cc3349e72c14a451"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/myokyawhtun/PDFMerger/zipball/a0e6fcaf10dad00360414362cc3349e72c14a451",
+                "reference": "a0e6fcaf10dad00360414362cc3349e72c14a451",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PDFMerger": "PDFMerger.php"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Jarrod Nettles",
+                    "email": "jarrod@squarecrow.com"
+                },
+                {
+                    "name": "Vasiliy Zaytsev",
+                    "email": "vasiliy.zaytsev@ffwagency.com"
+                },
+                {
+                    "name": "Myo Kyaw Htun",
+                    "email": "myochauhtun@gmail.com"
+                }
+            ],
+            "description": "PDFMerger for PHP (PHP 5 and up to PHP 7.1 Compatible)",
+            "support": {
+                "issues": "https://github.com/myokyawhtun/PDFMerger/issues",
+                "source": "https://github.com/myokyawhtun/PDFMerger/tree/master"
+            },
+            "time": "2021-05-22T12:07:20+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -7849,7 +7895,9 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {
+        "myokyawhtun/pdfmerger": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

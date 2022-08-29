@@ -13,6 +13,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "myokyawhtun/pdfmerger": "dev-master",
         "yandex-market/yandex-market-php-oauth": "*"
     },
     "require-dev": {
@@ -29,7 +30,8 @@
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",
-            "Database\\Seeders\\": "database/seeders/"
+            "Database\\Seeders\\": "database/seeders/",
+            "PDFMerger\\": "vendor/myokyawhtun/pdfmerger/"
         }
     },
     "autoload-dev": {

@@ -9,7 +9,7 @@ Route::name('.yandex-market')->prefix('yandex-market')->controller(YandexMarketC
   _addRouteController('patch', 'udpate-settings');
 
   _addRouteController('get', 'get-orders');
-  _addRouteController('get', 'get-labels');
+  _addRouteController('get', 'action');
 
   _addRouteController('get', 'login');
   _addRouteController('get', 'logout');
