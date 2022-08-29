@@ -26,7 +26,7 @@ class YandexMarketController extends Controller
 
     return redirect()
       ->back()
-      ->with('alerts', [
+      ->with('notifies', [
         ['type' => 'success', 'html' => 'Настройки сохранены'],
       ]);
   }

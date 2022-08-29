@@ -1,12 +1,12 @@
 @php
 $has_errors = $errors->any();
-$has_alerts = Session::has('alerts');
+$has_notifies = Session::has('notifies');
 @endphp
 
-@if ($has_errors || $has_alerts)
-  <div id="alerts">
+@if ($has_errors || $has_notifies)
+  <div id="notifies">
     @if ($has_errors)
-      <div class="alert alert-danger">
+      <div class="notify notify-danger">
         Ошибки:
         <ul class="ml-4">
           @foreach ($errors->all('<li class="list-disc">:message</li>') as $error)
@@ -16,13 +16,13 @@ $has_alerts = Session::has('alerts');
       </div>
     @endif
 
-    @if ($has_alerts)
-      @foreach (Session::get('alerts') as $alert)
+    @if ($has_notifies)
+      @foreach (Session::get('notifies') as $notify)
         @php
-          $type = is_array($alert) ? $alert['type'] : 'warning';
-          $html = is_array($alert) ? $alert['html'] : $alert;
+          $type = is_array($notify) ? $notify['type'] : 'warning';
+          $html = is_array($notify) ? $notify['html'] : $notify;
         @endphp
-        <div class="alert alert-{{ $type }}">
+        <div class="notify notify-{{ $type }}">
           <p>{{ $html }}</p>
         </div>
       @endforeach
@@ -30,23 +30,24 @@ $has_alerts = Session::has('alerts');
 
     <script>
       document.addEventListener('DOMContentLoaded', function() {
-        const removeAlert = $alert => {
-          $alert.classList.remove('show');
-          $alert.addEventListener('transitionend', $alert.remove);
+        const removeNotify = $notify => {
+          $notify.classList.remove('show');
+          $notify.addEventListener('transitionend', $notify.remove);
         };
-        const showAlert = ($alert, idx) => {
+        const showNotify = ($notify, idx) => {
           const delayIn = idx * 100;
           const delayOut = 5000 - delayIn * 2;
 
           setTimeout(() => {
-            $alert.classList.add('show');
-            setTimeout(() => removeAlert($alert), delayOut);
+            $notify.classList.add('show');
+            setTimeout(() => removeNotify($notify), delayOut);
           }, delayIn);
 
         }
 
-        var alerts = document.querySelectorAll('#alerts .alert');
-        [...alerts].forEach(showAlert);
+        var notifies = document.querySelectorAll('#notifies .notify');
+        console.log(notifies);
+        [...notifies].forEach(showNotify);
       });
     </script>
   </div>

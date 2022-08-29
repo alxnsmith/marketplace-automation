@@ -1,6 +1,6 @@
 <x-dashboard-layout title="Заказы Yandex Market">
   @empty($campaign_id)
-    <div class="alert alert-danger show">
+    <div class="notify notify-danger show">
       Не выбрана кампания, перейдите в <a href="{{ route('dashboard.tools.yandex-market.settings') }}">настройки</a>.
     </div>
   @else

@@ -5,7 +5,7 @@ $has_data = $csv ? count($data) > 1 : !empty($data);
 @endphp
 
 @if (!$has_data)
-  <div class="alert show">Нет данных</div>
+  <div class="notify show">Нет данных</div>
 @else
   @php
     if ($csv) {
