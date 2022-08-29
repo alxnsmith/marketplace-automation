@@ -1,29 +1,21 @@
-<?php
-$cols = ['id', 'status', 'substatus', 'total', 'fake'];
-$data = Arr::map(
-    $orders,
-    fn($v, $k) => [
-        '<input type="checkbox" data-action="check_all">' => [
-            'class' => 'text-center',
-            'html' => "<input type='checkbox' data-action='check_order' name='orders[{$k}]' value='{$v['id']}'>",
-        ],
-        'id' => $v['id'],
-        'status' => $v['status'],
-        'substatus' => $v['substatus'],
-        'total' => $v['total'],
-        'fake' => $v['fake'] ? 'Да' : 'Нет',
-    ],
-);
-?>
 <x-dashboard-layout title="Заказы Yandex Market">
-  @dump(compact('pager', 'orders'))
+  {{-- @dump(compact('pager', 'orders')) --}}
   <hr class="my-4" />
   <form action="{{ route('dashboard.tools.yandex-market.action') }}">
     @csrf
-    <div class="acitons mb-3">
-      <x-button name="action" value="get_labels">Скачать Ярлыки</x-button>
+    <div class="acitons mb-3 flex items-center gap-4 border-t border-b py-2">
+      {{-- <x-button name="action" value="get_labels">Скачать Ярлыки</x-button> --}}
+      <label>
+        <input type="checkbox" name="actions[ready_to_ship]" checked>
+        Готов к отгрузке
+      </label>
+      <label>
+        <input type="checkbox" name="actions[get_labels]" checked>
+        Скачать ярлыки
+      </label>
+      <x-button name="action" value='do_actions'>Выполнить</x-button>
     </div>
-    <x-dashboard.table :data="$data" :sizes="[70]" />
+    <x-dashboard.table :data="$table" :csv="true" :sizes="[70]" />
   </form>
 </x-dashboard-layout>
 

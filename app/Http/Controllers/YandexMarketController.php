@@ -2,11 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Helpers\Validators;
 use App\Services\Yandex;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Yandex\OAuth\OAuthClient;
-
-use PDFMerger\PDFMerger;
 
 class YandexMarketController extends Controller
 {
@@ -36,42 +36,28 @@ class YandexMarketController extends Controller
     $campaign_id = Yandex::Settings::get('campaign_id');
     if (!request()->has('action')) return view('tools.yandex-market.get-orders-form', compact('campaign_id'));
 
-    $data = [...Yandex::Market::get_orders($campaign_id)];
-    return view('tools.yandex-market.show-orders', $data);
+    $table = Yandex::Market::get_orders_table($campaign_id);
+
+    return view('tools.yandex-market.show-orders', compact('table'));
   }
 
   public function action()
   {
     $query = request()->validate([
-      'action' => 'required|in:get_labels',
+      'action' => 'required|in:do_actions',
+
+      'actions' => 'required_if:do_action,do_actions|array',
+      'actions.*' => [Validators::checkKeys(['ready_to_ship', 'get_labels'], '%s - Неверное действие')],
+
       'orders' =>  'required|array',
       'orders.*' => 'required|integer',
     ]);
-    switch ($query['action']) {
-      case 'get_labels':
-        $campaign_id = Yandex::Settings::get('campaign_id');
-        $orders = $query['orders'];
-        $labels = [];
-        foreach ($orders as $order_id) {
-          $labels[$order_id] = Yandex::Market::get_order_labels_pdf($campaign_id, $order_id);
-        }
+    $orders = $query['orders'];
 
-        // dd($labels);
-        $merger = new PDFMerger();
-        $files = [];
-        foreach ($labels as $order_id => $file) {
-          $files[] = $tmp_file = tempnam(sys_get_temp_dir(), "order_labels_{$order_id}_");
-          file_put_contents($tmp_file, $file);
-          $merger->addPDF($tmp_file);
-        }
-        $merger->merge('download', "labels.pdf");
-        return redirect()->back()->with('alerts', [
-          ['type' => 'success', 'html' => 'Ярлыки сформированы'],
-        ]);
-        // return view('tools.yandex-market.show-labels', compact('labels'));
-    }
+    if (Arr::has($query, 'actions.ready_to_ship')) Yandex::Market::ready_to_ship($orders);
+    if (Arr::has($query, 'actions.get_labels')) return Yandex::Market::get_labels($orders);
 
-    return $query['orders'];
+    // return $query['orders'];
   }
 
   public function login()
