@@ -9,10 +9,10 @@ $has_data = $csv ? count($data) > 1 : !empty($data);
 @else
   @php
     if ($csv) {
-        $thead = array_values($data[0]);
-        $tbody = array_slice($data, 1);
+        $thead = array_values(Arr::pull($data, 0));
+        $tbody = $data;
     } else {
-        $thead = array_keys($data[0]);
+        $thead = array_keys(head($data));
         $tbody = $data;
     }
   @endphp
