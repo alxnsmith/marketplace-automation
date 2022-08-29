@@ -68,8 +68,7 @@ class Yandex
   }
   static function checkAuth($state = true)
   {
-    $token = static::Settings::get('access_token');
-    $is_auth = $token !== null;
+    $is_auth = static::Settings::has('access_token');
 
     return $state === $is_auth;
   }
