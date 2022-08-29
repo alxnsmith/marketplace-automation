@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\YandexMarketService;
+
+use App\Services\Yandex;
 use Illuminate\Http\Request;
 
 class DashboardController extends Controller
@@ -12,11 +13,10 @@ class DashboardController extends Controller
     $data = [
       'tools' => [
         "tools.yandex-market.parts.tools-card" => [
-          "settings" => YandexMarketService::Settings::get(),
+          "settings" => Yandex::Settings::get(),
         ]
       ]
     ];
-    // dd($data);
     return view('dashboard', $data);
   }
 }

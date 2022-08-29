@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\Yandex;
 use Illuminate\Http\Request;
 use Yandex\OAuth\OAuthClient;
-use App\Services\YandexMarketService;
 
 use PDFMerger\PDFMerger;
 
@@ -12,7 +12,7 @@ class YandexMarketController extends Controller
 {
   public function settings()
   {
-    $settings = YandexMarketService::Settings::get();
+    $settings = Yandex::Settings::get();
     return view('tools.yandex-market.settings', compact('settings'));
   }
 
@@ -22,7 +22,7 @@ class YandexMarketController extends Controller
       'settings.campaign_id' => 'required|integer',
     ])['settings'];
 
-    YandexMarketService::Settings::update($settings);
+    Yandex::Settings::update($settings);
 
     return redirect()
       ->back()
@@ -33,10 +33,10 @@ class YandexMarketController extends Controller
 
   public function get_orders()
   {
-    $campaign_id = YandexMarketService::Settings::get('campaign_id');
+    $campaign_id = Yandex::Settings::get('campaign_id');
     if (!request()->has('action')) return view('tools.yandex-market.get-orders-form', compact('campaign_id'));
 
-    $data = [...YandexMarketService::get_orders($campaign_id)];
+    $data = [...Yandex::Market::get_orders($campaign_id)];
     return view('tools.yandex-market.show-orders', $data);
   }
 
@@ -49,11 +49,11 @@ class YandexMarketController extends Controller
     ]);
     switch ($query['action']) {
       case 'get_labels':
-        $campaign_id = YandexMarketService::Settings::get('campaign_id');
+        $campaign_id = Yandex::Settings::get('campaign_id');
         $orders = $query['orders'];
         $labels = [];
         foreach ($orders as $order_id) {
-          $labels[$order_id] = YandexMarketService::get_order_labels_pdf($campaign_id, $order_id);
+          $labels[$order_id] = Yandex::Market::get_order_labels_pdf($campaign_id, $order_id);
         }
 
         // dd($labels);
@@ -80,14 +80,14 @@ class YandexMarketController extends Controller
       'redirect_uri' => url()->previous(),
     ]);
 
-    YandexMarketService::get_client()
+    Yandex::get_client()
       ->authRedirect(true, OAuthClient::CODE_AUTH_TYPE, $state);
   }
 
   public function _authenticate()
   {
-    $token = YandexMarketService::get_access_token_on_webhook();
-    YandexMarketService::Settings::init($token);
+    $token = Yandex::get_access_token_on_webhook();
+    Yandex::Settings::init($token);
 
     $state = json_decode(request()->get('state')); // TODO: Add validation and fallback to dashboard
     return redirect($state->redirect_uri);
@@ -95,7 +95,7 @@ class YandexMarketController extends Controller
 
   public function logout()
   {
-    YandexMarketService::Settings::clean();
+    Yandex::Settings::clean();
     return redirect()->back();
   }
 }
