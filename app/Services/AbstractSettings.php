@@ -45,7 +45,7 @@ abstract class AbstractSettings implements IAbstractSettings
   static function set($a, $b = null): void
   {
     if (is_array($a)) session([static::sess_key() => $a]);
-    if (is_string($a)) session()->push(static::sess_key($a), $b);
+    if (is_string($a))  session([static::sess_key($a) => $b]);
   }
 
   static function update($settings): void
