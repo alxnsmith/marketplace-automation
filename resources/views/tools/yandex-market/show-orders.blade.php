@@ -15,7 +15,7 @@ $data = Arr::map(
     ],
 );
 ?>
-<x-dashboard-layout title="Заказы Yandex Market" back="true" :backUrl="route('dashboard')">
+<x-dashboard-layout title="Заказы Yandex Market" hasBack="true" :backUrl="route('dashboard')">
   @dump(compact('pager', 'orders'))
   <hr class="my-4" />
   <form action="{{ route('dashboard.tools.yandex-market.action') }}">

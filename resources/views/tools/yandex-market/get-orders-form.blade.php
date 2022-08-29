@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Заказы Yandex Market" back="true" :backUrl="route('dashboard')">
+<x-dashboard-layout title="Заказы Yandex Market" hasBack="true" :backUrl="route('dashboard')">
   @empty($campaign_id)
     <div class="alert alert-danger show">
       Не выбрана кампания, перейдите в <a href="{{ route('dashboard.tools.yandex-market.settings') }}">настройки</a>.

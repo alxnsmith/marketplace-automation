@@ -1,4 +1,4 @@
-<x-dashboard-layout title="Настройки Yandex Market" back="true" :backUrl="route('dashboard')">
+<x-dashboard-layout title="Настройки Yandex Market" hasBack="true" :backUrl="route('dashboard')">
   @dump($settings)
   <form method="POST" action="{{ route('dashboard.tools.yandex-market.udpate-settings') }}">
     @csrf

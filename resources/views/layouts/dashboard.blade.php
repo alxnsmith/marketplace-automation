@@ -1,4 +1,4 @@
-@props(['title' => 'Dashboard', 'back' => false, 'backUrl' => url()->previous()])
+@props(['title' => 'Dashboard', 'hasBack' => false, 'backUrl' => url()->previous()])
 
 <x-app-layout>
   <x-slot name="header">
@@ -11,13 +11,11 @@
     <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
       <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
         <div @class([
-            'pt-16 relative' => $back,
+            'pt-16 relative' => $hasBack,
             'p-6 bg-white border-b border-gray-200',
         ])>
-          @if ($back)
-            <x-button href="{{ $backUrl }}"
-              class="absolute top-3 left-3 bg-blue-300 px-2 py-1 text-3xl leading-7 hover:bg-blue-400">⬅
-            </x-button>
+          @if ($hasBack)
+            <x-dashboard.back-btn :backUrl="$backUrl" />
           @endif
           {{ $slot }}
         </div>
