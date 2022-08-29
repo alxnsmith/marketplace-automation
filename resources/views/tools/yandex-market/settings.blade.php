@@ -10,6 +10,6 @@
           value="{{ old('settings.campaign_id', $settings['campaign_id']) }}">
       </div>
     </fieldset>
-    <x-button class="bg-blue-400">Сохранить</x-button>
+    <x-button class="btn-primary">Сохранить</x-button>
   </form>
 </x-dashboard-layout>

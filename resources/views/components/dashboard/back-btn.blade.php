@@ -1,3 +1,3 @@
 @props(['backUrl'])
-<x-button href="{{ $backUrl }}"
-  class="absolute top-3 left-3 bg-blue-300 px-2 py-1 text-3xl leading-7 hover:bg-blue-400">⬅</x-button>
+<x-button href="{{ $backUrl }}" class="btn-info btn-dense"><span class="mr-2 text-2xl leading-none">⬅</span>Назад
+</x-button>
