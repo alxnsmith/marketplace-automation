@@ -5,22 +5,38 @@
     </div>
   @else
     <form action="" method="get">
-      <select name="status">
-        <option value="">Статус</option>
-        <option value="">Любой Статус</option>
-        <option value="PROCESSING" selected>Обрабатывается</option>
-      </select>
-      <select name="substatus">
-        <option value="">Подстатус</option>
-        <option value="">Любой Подстатус</option>
-        <option value="STARTED" selected>Можно комплектовать</option>
-        {{-- <option value="READY_TO_SHIP">Готов к отгрузке</option> --}}
-      </select>
-      <label>
-        <input type="checkbox" name="fake" checked>
-        Тестовые
-      </label>
-      <x-button name="action">Запросить</x-button>
+      <fieldset class="flex items-center gap-4">
+        <x-dashboard.field-wrap label="Статус">
+          <select name="status">
+            <option value="">Любой</option>
+            <option value="PROCESSING" selected>Обрабатывается</option>
+          </select>
+        </x-dashboard.field-wrap>
+        <x-dashboard.field-wrap label="Подстатус">
+          <select name="substatus">
+            <option value="">Любой</option>
+            <option value="STARTED" selected>Можно комплектовать</option>
+            {{-- <option value="READY_TO_SHIP">Готов к отгрузке</option> --}}
+          </select>
+        </x-dashboard.field-wrap>
+        <x-dashboard.field-wrap label="Кол-во">
+          <select name="orders">
+            <option value="" selected>Все</option>
+            @foreach (range(50, 500, 50) as $i)
+              <option value="{{ $i }}">{{ $i }}</option>
+            @endforeach
+          </select>
+        </x-dashboard.field-wrap>
+        <x-dashboard.field-wrap>
+          <label>
+            <input type="checkbox" name="fake" checked>
+            Тестовые
+          </label>
+        </x-dashboard.field-wrap>
+        <x-dashboard.field-wrap class="ml-auto">
+          <x-button name="action">Запросить</x-button>
+        </x-dashboard.field-wrap>
+      </fieldset>
     </form>
   @endempty
 </x-dashboard-layout>
