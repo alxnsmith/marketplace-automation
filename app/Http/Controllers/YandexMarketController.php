@@ -23,12 +23,10 @@ class YandexMarketController extends Controller
     ])['settings'];
 
     Yandex::Settings::update($settings);
+    notify('Настройки успешно обновлены');
 
     return redirect()
-      ->back()
-      ->with('notifies', [
-        ['type' => 'success', 'html' => 'Настройки сохранены'],
-      ]);
+      ->back();
   }
 
   public function get_orders()
@@ -76,6 +74,7 @@ class YandexMarketController extends Controller
     Yandex::Settings::init($token);
 
     $state = json_decode(request()->get('state')); // TODO: Add validation and fallback to dashboard
+    notify('Авторизация прошла успешно');
     return redirect($state->redirect_uri);
   }
 

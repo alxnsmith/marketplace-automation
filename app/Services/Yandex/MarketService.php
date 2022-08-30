@@ -96,14 +96,14 @@ class MarketService
       $merger->addPDF($tmp_file);
     }
     $merger->merge('download', "labels.pdf");
-    return redirect()->back()->with('notifies', [
-      ['type' => 'success', 'html' => 'Ярлыки сформированы'],
-    ]);
+    notify('Ярлыки скачаны');
+
     // return view('tools.yandex-market.show-labels', compact('labels'));
   }
 
   static function ready_to_ship($orders)
   {
+    notify('Статусы успешно изменены');
     // request()->dd();
     // dd($orders);
   }

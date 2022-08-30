@@ -32,7 +32,10 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "PDFMerger\\": "vendor/myokyawhtun/pdfmerger/"
-        }
+        },
+        "files": [
+            "app/Utils/LaravelNotify/helpers.php"
+        ]
     },
     "autoload-dev": {
         "psr-4": {

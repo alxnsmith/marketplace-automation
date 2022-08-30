@@ -17,10 +17,10 @@ $has_notifies = Session::has('notifies');
     @endif
 
     @if ($has_notifies)
-      @foreach (Session::get('notifies') as $notify)
+      @foreach (notify()->pull() as $notify)
         @php
-          $type = is_array($notify) ? $notify['type'] : 'warning';
-          $html = is_array($notify) ? $notify['html'] : $notify;
+          $type = $notify['type'];
+          $html = $notify['message'];
         @endphp
         <div class="notify notify-{{ $type }}">
           <p>{{ $html }}</p>
