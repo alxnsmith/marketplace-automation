@@ -7,7 +7,6 @@ $has_notifies = Session::has('notifies');
   <div id="notifies">
     @if ($has_errors)
       <div class="notify notify-danger">
-        Ошибки:
         <ul class="ml-4">
           @foreach ($errors->all('<li class="list-disc">:message</li>') as $error)
             {!! $error !!}
