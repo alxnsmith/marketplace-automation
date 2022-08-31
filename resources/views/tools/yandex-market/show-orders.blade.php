@@ -1,5 +1,4 @@
 <x-dashboard-layout title="Заказы Yandex Market">
-  {{-- @dump(compact('pager', 'orders')) --}}
   <hr class="my-4" />
   <form action="{{ route('dashboard.tools.yandex-market.action') }}">
     @csrf
@@ -15,7 +14,7 @@
       </label>
       <x-button name="action" value='do_actions'>Выполнить</x-button>
     </div>
-    <x-dashboard.table :data="$table" :csv="true" :sizes="[70]" />
+    <x-dashboard.table class="text-center" :data="$table" :csv="true" :sizes="[70]" />
   </form>
 </x-dashboard-layout>
 
