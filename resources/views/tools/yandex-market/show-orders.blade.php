@@ -14,7 +14,7 @@
       </label>
       <x-button name="action" value='do_actions'>Выполнить</x-button>
     </div>
-    <x-dashboard.table class="text-center" :data="$table" :csv="true" :sizes="[70]" />
+    <x-dashboard.table class="orders-table text-center" :data="$table" :csv="true" :sizes="[70]" />
   </form>
 </x-dashboard-layout>
 
@@ -23,23 +23,12 @@
     const $check_all = document.querySelector('[data-action="check_all"]');
     const [...$checkboxes] = document.querySelectorAll('[data-action="check_order"]');
 
-    $check_all.addEventListener('change', function() {
-      $checkboxes.forEach(function($checkbox) {
-        $checkbox.checked = $check_all.checked;
-      });
-    });
+    $checkboxes.setAll = val => $checkboxes.forEach($el => $el.checked = val);
+    $checkboxes.hasUnchecked = () => $checkboxes.some($el => !$el.checked);
+    $check_all.updateCheck = () => $check_all.checked = !$checkboxes.hasUnchecked();
+    $check_all.handler = e => $checkboxes.setAll(e.target.checked);
 
-    $checkboxes.forEach(function($checkbox) {
-      $checkbox.addEventListener('change', function() {
-        if ($checkboxes.every(function($checkbox) {
-            return $checkbox.checked;
-          })) {
-          $check_all.checked = true;
-        } else {
-          $check_all.checked = false;
-        }
-      });
-    });
-
+    $check_all.addEventListener('change', $check_all.handler);
+    $checkboxes.forEach($checkbox => $checkbox.addEventListener('change', $check_all.updateCheck));
   });
 </script>
