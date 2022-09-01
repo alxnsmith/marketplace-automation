@@ -21,7 +21,7 @@
         </x-dashboard.field-wrap>
         <x-dashboard.field-wrap label="Кол-во">
           <select name="pages">
-            <option value="" selected>Все</option>
+            <option value="0" selected>Все</option>
             @foreach (range(50, 500, 50) as $i => $val)
               <option value="{{ $i + 1 }}">{{ $val }}</option>
             @endforeach

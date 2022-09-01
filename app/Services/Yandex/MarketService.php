@@ -8,9 +8,12 @@ use Illuminate\Support\Arr;
 use PDFMerger\PDFMerger;
 use ReflectionEnum;
 
-class MarketService
+class MarketService implements IMarketService
 {
   const Settings = YandexSettings::class;
+  const Status = Status::class;
+  const SubStatus = SubStatus::class;
+
   static function url($name, ...$args)
   {
     $urls = [
@@ -20,20 +23,35 @@ class MarketService
     return sprintf($urls[$name], ...$args);
   }
 
-  static function get_orders($campaign_id): array
+  static function _request_orders($campaign_id, $status = "ALL", $substatus = "ALL", $pages = 1, $fake = false)
   {
     $URL = self::url('get_orders', $campaign_id);
-    $query = request()->only(['status', 'substatus', 'fake']);
-    $response = Yandex::request($URL, 'GET', compact('query'))->json();
+    $query = compact('status', 'substatus', 'fake');
 
-    return $response;
+    return Yandex::request($URL, 'GET', compact('query'))->json();
   }
 
-  static function get_orders_table($campaign_id): array
+  static function get_orders($campaign_id, $status = "ALL", $substatus = "ALL", $pages = 0, $fake = false): array
   {
-    ['pager' => $pager, 'orders' => $orders] = static::get_orders($campaign_id);
+    $response = static::_request_orders($campaign_id, $status, $substatus, $pages, $fake);
+    ['pager' => $pager, 'orders' => $orders] = $response;
+
+    $pages = min($pages, $pager['pagesCount']) ?: $pager['pagesCount']; // If pages has been provided as 0, then get all pages
+
+    for ($i = 2; $i <= $pages; $i++) {
+      $response = static::_request_orders($campaign_id, $status, $substatus, $i, $fake);
+      $orders = array_merge($orders, $response['orders']);
+    }
+
+    return $orders;
+  }
+
+  static function get_orders_table($campaign_id, $status = "ALL", $substatus = "ALL", $pages = 0, $fake = false): array
+  {
+    $orders =  static::get_orders($campaign_id, $status, $substatus, $pages, $fake);
 
     $cols = [
+      'i' => '№',
       'check_all' => '<input type="checkbox" data-action="check_all">',
       'id' => 'ID',
       'status' => 'Статус',
@@ -43,7 +61,7 @@ class MarketService
     $thead = array_values($cols);
     $table = [$thead];
 
-    foreach ($orders as $order) {
+    foreach ($orders as $i => $order) {
       $row = [];
       $values =  array_merge($cols, Arr::only($order, array_keys($cols)));
 
@@ -60,6 +78,9 @@ class MarketService
             break;
           case 'check_all':
             $value = "<input type='checkbox' data-action='check_order' name='orders[]' value='{$order['id']}'>";
+            break;
+          case 'i':
+            $value = $i + 1;
             break;
           default:
             $value = $val;
@@ -95,17 +116,16 @@ class MarketService
       file_put_contents($tmp_file, $file);
       $merger->addPDF($tmp_file);
     }
-    $merger->merge('download', "labels.pdf");
-    notify('Ярлыки скачаны');
 
-    // return view('tools.yandex-market.show-labels', compact('labels'));
+    $merger->merge('file', "labels.pdf");
+
+    notify('Ярлыки сформированы');
+    return view('tools.yandex-market.show-labels', compact('labels'));
   }
 
   static function ready_to_ship($orders)
   {
     notify('Статусы успешно изменены');
-    // request()->dd();
-    // dd($orders);
   }
 }
 
@@ -118,13 +138,15 @@ function Status(string $name): string
     "PICKUP" => "Заказ доставлен в пункт самовывоза.",
     "PROCESSING" => "Заказ находится в обработке.",
     "REJECTED" => "Заказ создан, но не оплачен.",
-    "UNPAID" => "Заказ оформлен, но еще не оплачен (если выбрана оплата при оформлении)."
+    "UNPAID" => "Заказ оформлен, но еще не оплачен (если выбрана оплата при оформлении).",
+    default => "{{" . $name . "}}"
   };
 }
 
 function SubStatus(string $name): string
 {
   return match ($name) {
+    "ALL" => "Все",
     "STARTED" => "Заказ подтвержден, его можно начать обрабатывать.",
     "READY_TO_SHIP" => "Заказ собран и готов к отправке.",
     "SHIPPED" => "Заказ передан службе доставки.",
@@ -141,5 +163,19 @@ function SubStatus(string $name): string
     "USER_REFUSED_PRODUCT" => "Покупателю не подошел товар.",
     "USER_REFUSED_QUALITY" => "Покупателя не устроило качество товара.",
     "USER_UNREACHABLE" => "Не удалось связаться с покупателем.",
+    "USER_WANTS_TO_CHANGE_ADDRESS" => "Покупатель хочет изменить адрес доставки.",
+    "USER_WANTS_TO_CHANGE_DELIVERY_DATE" => "Покупатель хочет изменить дату доставки.",
+    default => "{{" . $name . "}}"
   };
+}
+
+
+interface IMarketService
+{
+  const Settings = YandexSettings::class;
+  const Status = Status::class;
+  const SubStatus = SubStatus::class;
+
+  static function get_orders(string $campaign_id, string $status = 'ALL', string $substatus = 'ALL', int $pages = 0, $fake = false): array;
+  static function get_orders_table(string $campaign_id, string $status = 'ALL', string $substatus = 'ALL', int $pages = 0, $fake = false): array;
 }
