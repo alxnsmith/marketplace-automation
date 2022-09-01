@@ -34,7 +34,14 @@ class YandexMarketController extends Controller
     $campaign_id = Yandex::Settings::get('campaign_id');
     if (!request()->has('action')) return view('tools.yandex-market.get-orders-form', compact('campaign_id'));
 
-    $table = Yandex::Market::get_orders_table($campaign_id);
+    $query = request()->validate([
+      'status' => 'nullable|in:PROCESSING',
+      'substatus' => 'nullable|in:STARTED',
+      'pages' => 'nullable|integer|min:0|max:10',
+      'fake' => 'nullable',
+    ]);
+
+    $table = Yandex::Market::get_orders_table($campaign_id, ...$query);
 
     return view('tools.yandex-market.show-orders', compact('table'));
   }
