@@ -62,7 +62,8 @@ class YandexMarketController extends Controller
     if (Arr::has($query, 'actions.ready_to_ship')) Yandex::Market::ready_to_ship($orders);
     if (Arr::has($query, 'actions.get_labels')) return Yandex::Market::get_labels($orders);
 
-    // return $query['orders'];
+    return redirect()
+      ->back();
   }
 
   public function login()

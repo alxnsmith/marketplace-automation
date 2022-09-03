@@ -6,6 +6,7 @@ use App\Services\AbstractSettings;
 
 class Settings extends AbstractSettings
 {
+  const STATUS_UPDATE_MAX_ORDERS_COUNT = 30;
   const SESSION_KEY = 'YANDEX_SETTINGS';
   const DEFAULT_SETTINGS = [
     'access_token' => null,

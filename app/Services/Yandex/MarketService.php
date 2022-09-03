@@ -4,6 +4,7 @@ namespace App\Services\Yandex;
 
 use App\Services\Yandex;
 use App\Services\Yandex\Settings as YandexSettings;
+use Exception;
 use Illuminate\Support\Arr;
 use PDFMerger\PDFMerger;
 use ReflectionEnum;
@@ -18,6 +19,7 @@ class MarketService implements IMarketService
   {
     $urls = [
       'get_orders' => 'https://api.partner.market.yandex.ru/v2/campaigns/%s/orders.json',
+      'status_update' => 'https://api.partner.market.yandex.ru/v2/campaigns/%s/orders/status-update',
       'get_order_labels_pdf' => 'https://api.partner.market.yandex.ru/v2/campaigns/%s/orders/%s/delivery/labels.json',
     ];
     return sprintf($urls[$name], ...$args);
@@ -117,7 +119,7 @@ class MarketService implements IMarketService
       $merger->addPDF($tmp_file);
     }
 
-    $merger->merge('file', "labels.pdf");
+    $merger->merge('download', "labels.pdf");
 
     notify('Ярлыки сформированы');
     return view('tools.yandex-market.show-labels', compact('labels'));
@@ -125,7 +127,41 @@ class MarketService implements IMarketService
 
   static function ready_to_ship($orders)
   {
+    static::update_status_orders($orders, 'PROCESSING', 'READY_TO_SHIP');
     notify('Статусы успешно изменены');
+  }
+
+  static function update_status_orders($orders, $status, $substatus = null)
+  {
+    $campaign_id = Yandex::Settings::get('campaign_id');
+    $URL = static::url('status_update', $campaign_id);
+
+    $orders = array_map(
+      fn ($order_id) => [
+        'id' => $order_id,
+        'status' => $status,
+        'substatus' => $substatus
+      ],
+      $orders
+    );
+    $orders = array_chunk($orders, static::Settings::STATUS_UPDATE_MAX_ORDERS_COUNT);
+
+    foreach ($orders as $chunk) {
+      $params = [
+        'body' => json_encode(['orders' => $chunk]),
+        'headers' => [
+          'Content-Type' => 'application/json'
+        ]
+      ];
+
+      $response = Yandex::request($URL, 'POST', $params);
+
+      if ($response->status() != 200) {
+        throw new Exception("Ошибка при изменении статуса заказов: {$response->body()}");
+      }
+    }
+
+    return $response->json();
   }
 }
 
