@@ -1,0 +1,23 @@
+{
+    "name": "nillkizz/auth",
+    "description": "",
+    "authors": [
+        {
+            "name": "Alexander Smith",
+            "email": "alx.n.smith@ya.ru"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Auth\\": ""
+        }
+    }
+}
