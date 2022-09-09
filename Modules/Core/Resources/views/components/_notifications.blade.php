@@ -14,6 +14,15 @@
 
     document.getElementById('notifications').appendChild($notify);
   }
+  window.responseErrorHandler = (e) => {
+    const title = e.message;
+    if (e.response.status === 422) {
+      const message = `<p>${title}</p><ul><li>${e.response.data.message}</li></ul>`;
+      notifyJs(message, 'danger');
+      return;
+    }
+    notifyJs(title, 'danger');
+  }
 
   document.addEventListener('DOMContentLoaded', function() {
     watchForNotifications(document.getElementById('notifications'));
