@@ -1,5 +1,14 @@
 @php
-$links = [['title' => 'Показать заказы', 'route' => 'dashboard.tools.yandex-market.get-orders'], ['title' => 'Настройки', 'route' => 'dashboard.tools.yandex-market.settings']];
+$links = [
+    [
+        'title' => 'Показать заказы',
+        'route' => 'dashboard.tools.yandex-market.orders',
+    ],
+    [
+        'title' => 'Настройки',
+        'route' => 'dashboard.tools.yandex-market.settings',
+    ],
+];
 $is_logged_in = !empty(Arr::get($settings, 'access_token'));
 
 $title = 'Yandex Market';
@@ -21,10 +30,13 @@ if (!empty($settings['campaign_id'])) {
   <x-slot name="footer">
     <div class="actions">
       @unless($is_logged_in)
-        <x-dashboard::button href="{{ route('dashboard.tools.yandex-market.login') }}">Войти</x-button>
-        @else
-          <x-dashboard::button href="{{ route('dashboard.tools.yandex-market.logout') }}">Выйти</x-button>
-          @endunless
+        <x-dashboard::button href="{{ route('dashboard.tools.yandex-market.login') }}">Войти</x-dashboard::button>
+      @else
+        <form action="{{ route('dashboard.tools.yandex-market.logout') }}" method="POST">
+          @csrf
+          <x-dashboard::button>Выйти</x-dashboard::button>
+        </form>
+      @endunless
     </div>
   </x-slot>
 </x-dashboard::card>

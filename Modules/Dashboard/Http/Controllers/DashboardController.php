@@ -6,6 +6,7 @@ use Illuminate\Contracts\Support\Renderable;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Modules\Dashboard\Services\Yandex;
+use Modules\Dashboard\Services\Yandex\YandexSettingsRepository;
 
 class DashboardController extends Controller
 {
@@ -18,7 +19,7 @@ class DashboardController extends Controller
     $data = [
       'tools' => [
         "dashboard::tools.yandex-market.parts.tools-card" => [
-          "settings" => Yandex::Settings::get(),
+          "settings" => YandexSettingsRepository::getInstance()->getValuesArray(),
         ]
       ]
     ];

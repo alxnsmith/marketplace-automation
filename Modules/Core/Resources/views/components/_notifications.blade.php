@@ -1,7 +1,6 @@
-<div id="notifications">
-</div>
-
+<div id="notifications"></div>
 <script>
+  // TODO: move to separate JS file. 
   (() => {
     class TAG {
       static p = (html) => `<p>${html}</p>`

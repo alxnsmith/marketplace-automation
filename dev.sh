@@ -1,0 +1,1 @@
+sail stop && sail up -d && sail yarn dev

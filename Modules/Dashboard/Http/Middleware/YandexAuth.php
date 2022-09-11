@@ -17,6 +17,7 @@ class YandexAuth
    */
   public function handle(Request $request, Closure $next)
   {
+    $yandexSettings = Yandex\YandexSettingsRepository::getInstance();
     if (Yandex::checkAuth(false)) {
       return redirect()
         ->route('dashboard')

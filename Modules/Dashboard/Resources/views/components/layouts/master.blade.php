@@ -14,14 +14,12 @@
 
   <!-- Scripts -->
   <x-core::assets />
-  @vite(['Modules/Dashboard/Resources/assets/sass/app.sass', 'Modules/Dashboard/Resources/assets/js/app.js'])
+  @vite(['Modules/Dashboard/Resources/assets/sass/app.sass'])
 </head>
 
 <body class="font-sans antialiased">
   <div class="min-h-screen bg-gray-100">
     <x-dashboard::layouts.navigation />
-    {{-- <x-core.components.note /> --}}
-    <x-core::notifications />
 
     <!-- Page Heading -->
     <header class="bg-white shadow">
@@ -45,6 +43,9 @@
       </div>
     </main>
   </div>
+
+  <x-core::notifications />
+  @vite(['Modules/Dashboard/Resources/assets/js/app.js'])
 </body>
 
 </html>

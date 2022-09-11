@@ -3,70 +3,90 @@
 namespace Modules\Dashboard\Http\Controllers;
 
 use Illuminate\Routing\Controller;
-use Illuminate\Support\Arr;
-
+use Illuminate\Support\Facades\Bus;
 use Yandex\OAuth\OAuthClient;
 
-use Modules\Core\Rules\CheckKeys;
+use Modules\Dashboard\Http\Requests\YandexMarketActionRequest;
+use Modules\Dashboard\Http\Requests\YandexMarketOrdersShowRequest;
+use Modules\Dashboard\Jobs\ProcessYandexMarketOrders;
 use Modules\Dashboard\Services\Yandex;
+use Modules\Dashboard\Services\Yandex\YandexMarketRepository;
+use Modules\Dashboard\Services\Yandex\YandexSettingsRepository;
+
 
 class YandexMarketController extends Controller
 {
   public function settings()
   {
-    $settings = Yandex::Settings::get();
-    return view('dashboard::tools.yandex-market.settings', compact('settings'));
+    $settings_values = YandexSettingsRepository::getInstance()->getValuesArray();
+    return view('dashboard::tools.yandex-market.settings', compact('settings_values'));
   }
 
-  public function udpate_settings()
+  public function updateSettings()
   {
-    $settings = request()->validate([
+    $new_values = request()->validate([
       'settings.campaign_id' => 'required|integer',
     ])['settings'];
 
-    Yandex::Settings::update($settings);
-    notify('Настройки успешно обновлены');
+    $settings = YandexSettingsRepository::getInstance();
+    $settings->updateValues($new_values);
 
+    notify('Настройки успешно обновлены');
     return redirect()
       ->back();
   }
 
-  public function get_orders()
+  public function ordersShow(YandexMarketOrdersShowRequest $request)
   {
-    $campaign_id = Yandex::Settings::get('campaign_id');
-    if (!request()->has('action')) return view('dashboard::tools.yandex-market.get-orders-form', compact('campaign_id'));
+    $query = $request->validated();
 
-    $query = request()->validate([
-      'status' => 'nullable|in:PROCESSING',
-      'substatus' => 'nullable|in:STARTED',
-      'pages' => 'nullable|integer|min:0|max:10',
-      'fake' => 'nullable',
-    ]);
+    $yandexMarket = YandexMarketRepository::getInstance();
+    $orders = $yandexMarket->getOrders($query, ['id', 'status', 'substatus', 'fake'], true);
 
-    $table = Yandex::Market::get_orders_table($campaign_id, ...$query);
-
-    return view('dashboard::tools.yandex-market.show-orders', compact('table'));
+    return view('dashboard::tools.yandex-market.show-orders', compact('orders'));
   }
 
-  public function action()
+  public function orders()
   {
-    $query = request()->validate([
-      'action' => 'required|in:do_actions',
+    return view('dashboard::tools.yandex-market.get-orders-form');
+  }
 
-      'actions' => 'required_if:do_action,do_actions|array',
-      'actions.*' => [new CheckKeys(['ready_to_ship', 'get_labels'], 'Неверный атрибут %s')],
-
-      'orders' =>  'required|array',
-      'orders.*' => 'required|integer',
-    ]);
-
+  public function action(YandexMarketActionRequest $request) // TODO: Move to API
+  {
+    $query = $request->validated();
+    $actions = $query['actions'];
     $orders = $query['orders'];
 
-    if (Arr::has($query, 'actions.ready_to_ship')) Yandex::Market::ready_to_ship($orders);
-    if (Arr::has($query, 'actions.get_labels')) return Yandex::Market::get_labels($orders);
+    $jobs = [
+      'get_labels' => new ProcessYandexMarketOrders(auth()->user(), Yandex::Market::prepareOrdersForAction($orders, 'get_labels'), 'get_labels'),
+      'ready_to_ship' => new ProcessYandexMarketOrders(auth()->user(), Yandex::Market::prepareOrdersForAction($orders, 'ready_to_ship'), 'ready_to_ship'),
+    ];
 
-    return redirect()
-      ->back();
+    if (in_array('get_labels', $actions) && in_array('ready_to_ship', $actions)) {
+      Bus::chain([
+        $jobs['get_labels'],
+        $jobs['ready_to_ship'],
+      ])->dispatch();
+    } elseif (in_array('get_labels', $actions)) {
+      Bus::dispatch($jobs['get_labels']);
+    } elseif (in_array('ready_to_ship', $actions)) {
+      Bus::dispatch($jobs['ready_to_ship']);
+    }
+
+    return [
+      'status' => 'Processing',
+      'channel' => 'JobProgress.' . auth()->id(),
+      'actions' => [
+        'get_labels' => [
+          'status' => 'Processing',
+          'label' => 'Получение этикеток',
+        ],
+        'ready_to_ship' => [
+          'status' => 'Processing',
+          'label' => 'Готовность к отправке',
+        ],
+      ],
+    ];
   }
 
   public function login()
@@ -82,7 +102,8 @@ class YandexMarketController extends Controller
   public function _authenticate()
   {
     $token = Yandex::get_access_token_on_webhook();
-    Yandex::Settings::init($token);
+    $settings = YandexSettingsRepository::getInstance();
+    $settings->setAccessToken($token);
 
     $state = json_decode(request()->get('state')); // TODO: Add validation and fallback to dashboard
     notify('Авторизация прошла успешно');
@@ -91,7 +112,8 @@ class YandexMarketController extends Controller
 
   public function logout()
   {
-    Yandex::Settings::clean();
+    $settings = YandexSettingsRepository::getInstance();
+    $settings->reset();
     return redirect()->back();
   }
 }

@@ -26,11 +26,13 @@ class CheckKeys implements Rule
    */
   public function passes($attribute, $value)
   {
-    // Splite attribute by dot and get last part
-    $attribute = last(explode('.', $attribute));
+    $attribute = last(explode('.', $attribute)); // Split attribute by dot and get last part
+    $is_valid = in_array($attribute, $this->allowed_keys); // Return true if attribute is in allowed keys
 
-    // Return true if attribute is in allowed keys
-    return in_array($attribute, $this->allowed_keys);
+    // If attribute is not in allowed keys - set fail message
+    if (!$is_valid) $this->fail_message = sprintf($this->fail_message, $attribute);
+
+    return $is_valid;
   }
 
   /**
@@ -40,6 +42,6 @@ class CheckKeys implements Rule
    */
   public function message()
   {
-    return 'The validation error message.';
+    return $this->fail_message;
   }
 }

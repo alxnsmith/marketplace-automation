@@ -10,6 +10,8 @@ export default defineConfig({
 
         'Modules/Dashboard/Resources/assets/js/app.js',
         'Modules/Dashboard/Resources/assets/sass/app.sass',
+
+        'Modules/Dashboard/Resources/assets/js/pages/show-orders.js',
       ],
       refresh: true,
     }),

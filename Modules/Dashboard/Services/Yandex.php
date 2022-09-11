@@ -6,16 +6,22 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Http\Client\Response;
-
 use Yandex\OAuth\OAuthClient;
 use Yandex\OAuth\Exception\AuthRequestException;
 
-use Modules\Dashboard\Services\Yandex\Settings as YandexSettings;
 use Modules\Dashboard\Services\Yandex\MarketService as YandexMarketService;
+use Modules\Dashboard\Services\Yandex\YandexSettingsRepository;
 
 class Yandex
 {
-  const Settings = YandexSettings::class;
+  static $access_token = null;
+  static $campaign_id = null;
+
+  /**
+   * const Market
+   * 
+   * @var YandexMarketService
+   */
   const Market = YandexMarketService::class;
 
   static function get_client(): OAuthClient
@@ -32,9 +38,12 @@ class Yandex
     return env('YANDEX_CLIENT_SECRET');
   }
 
+
   static function get_auth_header(): string
   {
-    return 'OAuth oauth_token="' . self::Settings::get('access_token') . '" , oauth_client_id="' . self::get_client_id() . '"';
+    $settings = YandexSettingsRepository::getInstance();
+    $access_token = $settings->getAccessToken();
+    return 'OAuth oauth_token="' . $access_token . '", oauth_client_id="' . self::get_client_id() . '"';
   }
 
   static function get_access_token_on_webhook(): string
@@ -59,17 +68,18 @@ class Yandex
   {
     $response = Http::withHeaders(['Authorization' => static::get_auth_header()])
       ->send(Str::upper($method), $URL, $params);
-
     if (Arr::has($response, 'error')) {
       throw new AuthRequestException($response['error']['message']);
     }
 
     return $response;
   }
+
   static function checkAuth($state = true)
   {
-    $is_auth = static::Settings::has('access_token');
+    $settings = YandexSettingsRepository::getInstance();
 
+    $is_auth = $settings->hasAccessToken();
     return $state === $is_auth;
   }
 }

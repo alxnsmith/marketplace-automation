@@ -1,44 +1,35 @@
 <x-dashboard::layouts.master title="Заказы Yandex Market">
-  @empty($campaign_id)
-    <div class="notify notify-danger show">
-      <div class="notify-content">
-        Не выбрана кампания, перейдите в <a href="{{ route('dashboard.tools.yandex-market.settings') }}">настройки</a>.
-      </div>
-    </div>
-  @else
-    <form action="" method="get">
-      <fieldset class="flex items-center gap-4">
-        <x-dashboard::field-wrap label="Статус">
-          <select name="status">
-            <option value="">Любой</option>
-            <option value="PROCESSING" selected>Обрабатывается</option>
-          </select>
-        </x-dashboard::field-wrap>
-        <x-dashboard::field-wrap label="Подстатус">
-          <select name="substatus">
-            <option value="">Любой</option>
-            <option value="STARTED" selected>Можно комплектовать</option>
-            {{-- <option value="READY_TO_SHIP">Готов к отгрузке</option> --}}
-          </select>
-        </x-dashboard::field-wrap>
-        <x-dashboard::field-wrap label="Кол-во">
-          <select name="pages">
-            <option value="0" selected>Все</option>
-            @foreach (range(50, 500, 50) as $i => $val)
-              <option value="{{ $i + 1 }}">{{ $val }}</option>
-            @endforeach
-          </select>
-        </x-dashboard::field-wrap>
-        <x-dashboard::field-wrap>
-          <label>
-            <input type="checkbox" name="fake" checked>
-            Тестовые
-          </label>
-        </x-dashboard::field-wrap>
-        <x-dashboard::field-wrap class="ml-auto">
-          <x-dashboard::button name="action">Запросить</x-button>
-        </x-dashboard::field-wrap>
-      </fieldset>
-    </form>
-  @endempty
+  <form action="{{ route('dashboard.tools.yandex-market.orders.show') }}" method="get">
+    <fieldset class="flex items-center gap-4">
+      <x-dashboard::field-wrap label="Статус">
+        <x-dashboard::select name="status">
+          <option value="">Любой</option>
+          <option value="PROCESSING" selected>Обрабатывается</option>
+        </x-dashboard::select>
+      </x-dashboard::field-wrap>
+      <x-dashboard::field-wrap label="Подстатус">
+        <x-dashboard::select name="substatus">
+          <option value="">Любой</option>
+          <option value="STARTED" selected>Можно комплектовать</option>
+          {{-- <option value="READY_TO_SHIP">Готов к отгрузке</option> --}}
+        </x-dashboard::select>
+      </x-dashboard::field-wrap>
+      <x-dashboard::field-wrap label="Кол-во">
+        <x-dashboard::select name="pages">
+          <option value="0" selected>Все</option>
+          @foreach (range(50, 500, 50) as $i => $val)
+            <option value="{{ $i + 1 }}">{{ $val }}</option>
+          @endforeach
+        </x-dashboard::select>
+      </x-dashboard::field-wrap>
+      @env('local')
+      <x-dashboard::field-wrap>
+        <x-dashboard::checkbox name="fake" label="Тестовый запрос" value="on" checked />
+      </x-dashboard::field-wrap>
+      @endenv
+      <x-dashboard::field-wrap class="ml-auto">
+        <x-dashboard::button name="action">Запросить</x-button>
+      </x-dashboard::field-wrap>
+    </fieldset>
+  </form>
 </x-dashboard::layouts.master>

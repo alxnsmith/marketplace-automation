@@ -6,14 +6,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::name('.yandex-market')->prefix('yandex-market')->controller(YandexMarketController::class)->group(function () {
   Route::middleware('yandex.auth')->group(function () {
-    _addRouteController('get', 'settings');
-    _addRouteController('patch', 'udpate-settings');
+    Route::get('/settings', 'settings')->name('.settings');
+    Route::patch('/settings', 'updateSettings')->name('.settings.update');
 
-    _addRouteController('get', 'get-orders');
-    _addRouteController('get', 'action');
-    _addRouteController('get', 'logout');
+    Route::get('/orders', 'orders')->name('.orders');
+    Route::get('/orders/show', 'ordersShow')->name('.orders.show');
+
+    Route::post('/action', 'action')->name('.action');
+
+    Route::post('/logout', 'logout')->name('.logout');
   });
 
-  _addRouteController('get', 'login');
-  _addRouteController('get', '_authenticate');
+  Route::get('/login', 'login')->name('.login');
+  Route::get('/callback', '_authenticate')->name('.callback');
 });
