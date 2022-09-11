@@ -20,7 +20,7 @@ class YandexAuth
     $yandexSettings = Yandex\YandexSettingsRepository::getInstance();
     if (Yandex::checkAuth(false)) {
       return redirect()
-        ->route('dashboard')
+        ->route('dashboard.index')
         ->withErrors(['Необходима авторизация в Yandex']);
     }
 

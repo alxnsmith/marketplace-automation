@@ -14,7 +14,7 @@
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('dashboard')->middleware(['auth'])->name('dashboard')->group(function () {
-  Route::get('/', 'DashboardController@index');
+  Route::get('/', 'DashboardController@index')->name('.index');
 
   Route::prefix('tools')->name('.tools')->group(function () {
     require __DIR__ . '/tools/yandex-market-route.php';
