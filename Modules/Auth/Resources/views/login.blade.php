@@ -49,9 +49,13 @@
         @endif
 
         <x-auth::button class="ml-3">
-          {{ __('Log in') }}
-          </x-button>
+          {{ __('Login') }}
+        </x-auth::button>
       </div>
     </form>
-    </x-auth-card>
-    </x-guest-layout>
+    <a class="absolute top-1 right-2 text-xs text-gray-600 underline hover:text-gray-900"
+      href="{{ route('register') }}">
+      {{ __('Register') }}
+    </a>
+  </x-auth::card>
+</x-auth::guest-layout>
