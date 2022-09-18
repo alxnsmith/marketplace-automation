@@ -42,7 +42,7 @@ class YandexMarketController extends Controller
     $query = $request->validated();
 
     $yandexMarket = YandexMarketRepository::getInstance();
-    $orders = $yandexMarket->getOrders($query, ['id', 'status', 'substatus', 'fake'], true);
+    $orders = $yandexMarket->getOrders($query, null, true);
 
     return view('dashboard::tools.yandex-market.show-orders', compact('orders'));
   }

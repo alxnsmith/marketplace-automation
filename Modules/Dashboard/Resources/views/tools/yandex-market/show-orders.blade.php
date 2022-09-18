@@ -25,9 +25,11 @@
                 </div>
               </th>
               <th width="70px">№</th>
-              <th>ID</th>
+              <th>Номер</th>
+              <th>Когда создан</th>
+              <th>Отгрузка</th>
               <th>Статус</th>
-              <th>Подстатус</th>
+              <th>Сумма, ₽</th>
               @env('local')
               <th>Тестовый</th>
               @endenv
@@ -44,8 +46,16 @@
                 </td>
                 <td x-text="idx+1"></td>
                 <td x-text="order.id"></td>
-                <td x-text="order.status"></td>
-                <td x-text="order.substatus"></td>
+                <td>
+                  <div x-text="order.creationDate.split(' ')[0]"></div>
+                  <div x-text="order.creationDate.split(' ')[1]" class="text-xs text-gray-500"></div>
+                </td>
+                <td x-text="order.delivery.dates.fromDate"></td>
+                <td>
+                  <div x-text="order.status"></div>
+                  <div x-text="order.substatus" class="text-xs text-gray-500"></div>
+                </td>
+                <td x-text="order.itemsTotal"></td>
                 @env('local')
                 <td x-text="order.fake"></td>
                 @endenv
