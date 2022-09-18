@@ -52,8 +52,8 @@
                 </td>
                 <td x-text="order.delivery.shipments[0].shipmentDate"></td>
                 <td>
-                  <div x-text="order.status"></div>
-                  <div x-text="order.substatus" class="text-xs text-gray-500"></div>
+                  <div x-text="_status(order.status)"></div>
+                  <div x-text="_substatus(order.substatus)" class="text-xs text-gray-500"></div>
                 </td>
                 <td x-text="order.itemsTotal"></td>
                 @env('local')
