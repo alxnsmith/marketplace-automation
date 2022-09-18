@@ -19,7 +19,8 @@ class YandexMarketController extends Controller
   public function settings()
   {
     $settings_values = YandexSettingsRepository::getInstance()->getValuesArray();
-    return view('dashboard::tools.yandex-market.settings', compact('settings_values'));
+    $is_logged_in = Yandex::checkAuth();
+    return view('dashboard::tools.yandex-market.settings', compact('settings_values', 'is_logged_in'));
   }
 
   public function updateSettings()

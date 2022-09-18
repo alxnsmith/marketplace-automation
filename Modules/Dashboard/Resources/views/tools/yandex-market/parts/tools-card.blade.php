@@ -27,16 +27,9 @@ if (!empty($settings['campaign_id'])) {
       @endforeach
     </ul>
   @endunless
-  <x-slot name="footer">
-    <div class="actions">
-      @unless($is_logged_in)
-        <x-dashboard::button href="{{ route('dashboard.tools.yandex-market.login') }}">Войти</x-dashboard::button>
-      @else
-        <form action="{{ route('dashboard.tools.yandex-market.logout') }}" method="POST">
-          @csrf
-          <x-dashboard::button>Выйти</x-dashboard::button>
-        </form>
-      @endunless
-    </div>
-  </x-slot>
+  @unless($is_logged_in)
+    <x-slot name="footer">
+      <x-dashboard::button href="{{ route('dashboard.tools.yandex-market.login') }}">Войти</x-dashboard::button>
+    </x-slot>
+  @endunless
 </x-dashboard::card>
