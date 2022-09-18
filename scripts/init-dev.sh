@@ -1,5 +1,5 @@
-echo " > composer update"
-composer update
+sh scripts/init-base.sh
+
 echo " > sail up -d"
 sail up -d
 echo " > sail yarn install"
