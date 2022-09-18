@@ -66,8 +66,7 @@ class ProcessYandexMarketOrders implements ShouldQueue, ShouldBeUnique
         Mail::raw($message, function (Message $message) {
           $message
             ->to(auth()->user()->email)
-            ->subject('Этикетки для заказов с Яндекс.Маркета')
-            ->from('noreply@' . env('APP_HOST'), 'MarketAutomation');
+            ->subject('Этикетки для заказов с Яндекс.Маркета');
         });
         break;
       case 'ready_to_ship':
