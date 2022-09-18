@@ -50,7 +50,7 @@
                   <div x-text="order.creationDate.split(' ')[0]"></div>
                   <div x-text="order.creationDate.split(' ')[1]" class="text-xs text-gray-500"></div>
                 </td>
-                <td x-text="order.delivery.dates.fromDate"></td>
+                <td x-text="order.delivery.shipments[0].shipmentDate"></td>
                 <td>
                   <div x-text="order.status"></div>
                   <div x-text="order.substatus" class="text-xs text-gray-500"></div>

@@ -1,4 +1,4 @@
-@props(['title' => 'Dashboard'])
+@props(['title' => 'Dashboard', 'bgc' => 'bg-gray-100', 'card' => true])
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -18,7 +18,7 @@
 </head>
 
 <body class="font-sans antialiased">
-  <div class="min-h-screen bg-gray-100">
+  <div class="{{ $bgc }} min-h-screen">
     <x-dashboard::layouts.navigation />
 
     <!-- Page Heading -->
@@ -33,6 +33,16 @@
     <!-- Page Content -->
     <main>
       <div class="py-12">
+
+        @if ($card)
+          <x-dashboard::card class="mx-auto max-w-7xl py-4 px-2">
+            {{ $slot }}
+          </x-dashboard::card>
+        @else
+          {{ $slot }}
+        @endif
+      </div>
+      {{-- <div class="py-12">
         <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
           <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
             <div class="border-b border-gray-200 bg-white p-6">
@@ -40,7 +50,7 @@
             </div>
           </div>
         </div>
-      </div>
+      </div> --}}
     </main>
   </div>
 

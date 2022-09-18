@@ -42,24 +42,32 @@ class MarketService implements IMarketService
     return sprintf($urls[$name], ...$args);
   }
 
-  static function _request_orders($campaign_id, $status = "ALL", $substatus = "ALL", $page = 1, $fake = false)
+  static function _request_orders(string $campaign_id, array $fields)
   {
     $URL = self::url('get_orders', $campaign_id);
-    $query = compact('status', 'substatus', 'fake', 'page');
-
-    return self::Yandex::request($URL, 'GET', compact('query'))->json();
+    return self::Yandex::request($URL, 'GET', ['query' => $fields])->json();
   }
 
-  static function get_orders($campaign_id, $status = "ALL", $substatus = "ALL", $pages = 0, $fake = false): array
+  static function get_orders($campaign_id, $status = "ALL", $substatus = "ALL", $supplierShipmentDateFrom = null, $supplierShipmentDateTo = null, $pages = 0,  $fake = false): array
   {
-    $page = 1;
-    $response = static::_request_orders($campaign_id, $status, $substatus, $page++, $fake);
+    if ($supplierShipmentDateFrom) $supplierShipmentDateFrom = date('d-m-Y', strtotime($supplierShipmentDateFrom));
+    if ($supplierShipmentDateTo) $supplierShipmentDateTo = date('d-m-Y', strtotime($supplierShipmentDateTo));
+
+    $query = [
+      'status' => $status,
+      'substatus' => $substatus,
+      'fake' => $fake,
+      'supplierShipmentDateFrom' => $supplierShipmentDateFrom,
+      'supplierShipmentDateTo' => $supplierShipmentDateTo,
+      'page' => 1,
+    ];
+    $response = static::_request_orders($campaign_id, $query);
     ['pager' => $pager, 'orders' => $orders] = $response;
 
     $pages = min($pages, $pager['pagesCount']) ?: $pager['pagesCount']; // If pages has been provided as 0, then get all pages
 
-    for ($page; $page <= $pages; $page++) {
-      $response = static::_request_orders($campaign_id, $status, $substatus, $page, $fake);
+    for ($query['page']; $query['page'] <= $pages; $query['page']++) {
+      $response = static::_request_orders($campaign_id, $query);
       $orders = array_merge($orders, $response['orders']);
     }
     return $orders;

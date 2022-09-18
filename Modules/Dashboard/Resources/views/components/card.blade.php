@@ -1,14 +1,15 @@
-@props(['title' => ''])
+@props(['title' => '', 'bodyClass' => []])
 @php
-$head = $header ?? "<h3 class='text-xl'>" . $title . '</h3>';
+$has_header = !(empty($title) && empty($header));
+$header = $header ?? "<h3 class='text-xl'>" . $title . '</h3>';
 @endphp
 
-<div class="card-item">
-  @unless(empty($head))
-    <div class="card-item-head">{!! $head !!}</div>
+<div {{ $attributes->merge(['class' => 'card-item']) }}>
+  @unless(empty($has_header))
+    <div class="card-item-head">{!! $header !!}</div>
   @endunless
   @if ($slot->isNotEmpty())
-    <div class="card-item-body">
+    <div @class([...$bodyClass, 'card-item-body'])>
       {{ $slot }}
     </div>
   @endif

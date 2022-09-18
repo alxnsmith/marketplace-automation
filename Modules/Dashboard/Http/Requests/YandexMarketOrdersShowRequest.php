@@ -19,6 +19,8 @@ class YandexMarketOrdersShowRequest extends FormRequest
       'status' => 'nullable|in:PROCESSING',
       'substatus' => 'nullable|in:STARTED',
       'pages' => 'nullable|integer|min:0|max:10',
+      'supplierShipmentDateFrom' => 'nullable|date',
+      'supplierShipmentDateTo' => 'nullable|date',
       'fake' => 'nullable',
     ];
   }
